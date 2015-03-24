@@ -1,1 +1,9 @@
 D:\Политех\ФИТиКС\Системный анализ\SADantsigMethod\SADantsigMethod\bin\Debug\SADantsigMethod.exe.config
+D:\Политех\ФИТиКС\Системный анализ\SADantsigMethod\SADantsigMethod\obj\Debug\SADantsigMethod.csprojResolveAssemblyReference.cache
+D:\Политех\ФИТиКС\Системный анализ\SADantsigMethod\SADantsigMethod\obj\Debug\SADantsigMethod.Form1.resources
+D:\Политех\ФИТиКС\Системный анализ\SADantsigMethod\SADantsigMethod\obj\Debug\SADantsigMethod.Properties.Resources.resources
+D:\Политех\ФИТиКС\Системный анализ\SADantsigMethod\SADantsigMethod\obj\Debug\SADantsigMethod.csproj.GenerateResource.Cache
+D:\Политех\ФИТиКС\Системный анализ\SADantsigMethod\SADantsigMethod\bin\Debug\SADantsigMethod.exe
+D:\Политех\ФИТиКС\Системный анализ\SADantsigMethod\SADantsigMethod\bin\Debug\SADantsigMethod.pdb
+D:\Политех\ФИТиКС\Системный анализ\SADantsigMethod\SADantsigMethod\obj\Debug\SADantsigMethod.exe
+D:\Политех\ФИТиКС\Системный анализ\SADantsigMethod\SADantsigMethod\obj\Debug\SADantsigMethod.pdb
