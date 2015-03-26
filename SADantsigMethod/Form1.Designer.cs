@@ -35,10 +35,12 @@
             this.resAddBtn = new System.Windows.Forms.Button();
             this.statusBox = new System.Windows.Forms.GroupBox();
             this.controlBox = new System.Windows.Forms.GroupBox();
+            this.removeVarBtn = new System.Windows.Forms.Button();
+            this.removeResBtn = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.calcBtn = new System.Windows.Forms.Button();
             this.controlBox.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -59,13 +61,13 @@
             this.label8.AutoSize = true;
             this.label8.Location = new System.Drawing.Point(7, 45);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(126, 13);
+            this.label8.Size = new System.Drawing.Size(76, 13);
             this.label8.TabIndex = 12;
-            this.label8.Text = "Добавить переменную:";
+            this.label8.Text = "Переменные:";
             // 
             // varAddBtn
             // 
-            this.varAddBtn.Location = new System.Drawing.Point(140, 41);
+            this.varAddBtn.Location = new System.Drawing.Point(103, 45);
             this.varAddBtn.Name = "varAddBtn";
             this.varAddBtn.Size = new System.Drawing.Size(33, 21);
             this.varAddBtn.TabIndex = 11;
@@ -77,13 +79,13 @@
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(7, 69);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(127, 13);
+            this.label7.Size = new System.Drawing.Size(76, 13);
             this.label7.TabIndex = 10;
-            this.label7.Text = "Добавить ограничение:";
+            this.label7.Text = "Ограничения:";
             // 
             // resAddBtn
             // 
-            this.resAddBtn.Location = new System.Drawing.Point(140, 65);
+            this.resAddBtn.Location = new System.Drawing.Point(103, 69);
             this.resAddBtn.Name = "resAddBtn";
             this.resAddBtn.Size = new System.Drawing.Size(33, 21);
             this.resAddBtn.TabIndex = 3;
@@ -103,6 +105,8 @@
             // controlBox
             // 
             this.controlBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.controlBox.Controls.Add(this.removeVarBtn);
+            this.controlBox.Controls.Add(this.removeResBtn);
             this.controlBox.Controls.Add(this.label8);
             this.controlBox.Controls.Add(this.varAddBtn);
             this.controlBox.Controls.Add(this.label2);
@@ -110,13 +114,31 @@
             this.controlBox.Controls.Add(this.label7);
             this.controlBox.Controls.Add(this.resAddBtn);
             this.controlBox.Controls.Add(this.button2);
-            this.controlBox.Controls.Add(this.button1);
+            this.controlBox.Controls.Add(this.calcBtn);
             this.controlBox.Location = new System.Drawing.Point(411, 124);
             this.controlBox.Name = "controlBox";
             this.controlBox.Size = new System.Drawing.Size(211, 187);
             this.controlBox.TabIndex = 2;
             this.controlBox.TabStop = false;
             this.controlBox.Text = "Управление";
+            // 
+            // removeVarBtn
+            // 
+            this.removeVarBtn.Location = new System.Drawing.Point(142, 45);
+            this.removeVarBtn.Name = "removeVarBtn";
+            this.removeVarBtn.Size = new System.Drawing.Size(33, 21);
+            this.removeVarBtn.TabIndex = 14;
+            this.removeVarBtn.Text = "-";
+            this.removeVarBtn.UseVisualStyleBackColor = true;
+            // 
+            // removeResBtn
+            // 
+            this.removeResBtn.Location = new System.Drawing.Point(142, 69);
+            this.removeResBtn.Name = "removeResBtn";
+            this.removeResBtn.Size = new System.Drawing.Size(33, 21);
+            this.removeResBtn.TabIndex = 13;
+            this.removeResBtn.Text = "-";
+            this.removeResBtn.UseVisualStyleBackColor = true;
             // 
             // label2
             // 
@@ -145,14 +167,15 @@
             this.button2.Text = "Отобразить";
             this.button2.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // calcBtn
             // 
-            this.button1.Location = new System.Drawing.Point(6, 101);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(89, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Решить";
-            this.button1.UseVisualStyleBackColor = true;
+            this.calcBtn.Location = new System.Drawing.Point(6, 101);
+            this.calcBtn.Name = "calcBtn";
+            this.calcBtn.Size = new System.Drawing.Size(89, 23);
+            this.calcBtn.TabIndex = 0;
+            this.calcBtn.Text = "Решить";
+            this.calcBtn.UseVisualStyleBackColor = true;
+            this.calcBtn.Click += new System.EventHandler(this.calcBtn_Click);
             // 
             // Form1
             // 
@@ -179,11 +202,13 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button calcBtn;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button resAddBtn;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button varAddBtn;
+        private System.Windows.Forms.Button removeVarBtn;
+        private System.Windows.Forms.Button removeResBtn;
     }
 }
 
