@@ -243,14 +243,67 @@ namespace SADantsigMethod
             }
         }
 
-        void gaussMethod()
+        public void gaussMethod()
         {
             for (int i = 1; i < coefficArray.Count; i++)
             {
-
+                if (coefficArray[i][i - 1] == 0)
+                {
+                    int index = findStrIndex(i);
+                    List<double> temp = coefficArray[i];
+                    coefficArray[i] = coefficArray[index];
+                    coefficArray[index] = temp;
+                }
+                coefficArray[i] = multStr(coefficArray[i], 1/coefficArray[i][i - 1]);//приравнивание первого эл строки к 1
+                for (int j = i+1; j < coefficArray.Count; j++)//отчистка нижнего угла матрицы
+                {
+                    coefficArray[j] = subStrs(coefficArray[j], multStr(coefficArray[i], coefficArray[j][i - 1]));
+                }
+            }
+            for (int i = coefficArray.Count - 1; i > 1; i--)//отчистка верхнего угла матрицы
+            {
+                for (int j = coefficArray.Count - i; i > 1; i--)
+                {
+                    coefficArray[j] = subStrs(coefficArray[j], multStr(coefficArray[i], coefficArray[j][i - 1]));
+                }
             }
         }
 
+        
+
+
+        private List<double> multStr(List<double> str, double multiplier)//умножение всех элементов строки на число
+        {
+            List<double> temp = str.GetRange(0 ,str.Count);
+            
+            for (int i = 0; i < temp.Count; i++)
+            {
+                temp[i] *= multiplier;//умножение элемента на число
+            }
+            return temp;//вернуть полученную строку
+        }
+
+        private List<double> subStrs(List<double> arg1, List<double> arg2)//вычитание строк
+        {
+            List<double> temp = arg1.GetRange(0, arg1.Count);
+            for (int i = 0; i < arg1.Count; i++)
+            {
+                temp[i] -= arg2[i];//вычесть соответствующие элементы строк
+            }
+            return temp;//вернуть полученную строку
+        }
+
+        private int findStrIndex(int currentIndex)//поиск индекса строки с не нулевым элементом первого столбца
+        {
+            for (int i = currentIndex; i < coefficArray.Count; i++)
+            {
+                if (coefficArray[i][currentIndex - 1] != 0)
+                {
+                    return i;
+                }
+            }
+           return -1;
+        }
         //-//-//-//-//-//-//-//-//
         private void calcBtn_Click(object sender, EventArgs e)
         {
@@ -259,6 +312,7 @@ namespace SADantsigMethod
             fillNumberArrays();
             zeroTest();
             toCanonForm();
+            gaussMethod();
             ;
         }
 
