@@ -13,7 +13,9 @@ namespace SADantsigMethod
     public partial class Form1 : Form
     {
 
+ 
         List<List<double>> coefficArray = new List<List<double>>();//двумерный динамический массив коэффициентов
+        List<double> resValues = new List<double>();//динамический массив значений ограничений
         List<List<TextBox>> textBoxArray = new List<List<TextBox>>();//двумерный динамический массив TextBox-ов коэффициентов
         int restrictionNum=2;//количество ограничений
         int varNum=3;//количество переменных
@@ -147,29 +149,37 @@ namespace SADantsigMethod
             return newLabel;
         }
 
-        private void fillCoefArray()//заполнение массива коэффициентов
+        private void fillNumberArrays()//заполнение массива коэффициентов
         {
             foreach(List<TextBox> textBoxLine in textBoxArray)//извлечение значения из каждого текстбокс и его сохранение в массив
             {
                 List<double> coefLine = new List<double>();
-                foreach (TextBox textBox in textBoxLine)
-                {
-                    try//если содержимое текстбокса преобразуется в число, то оно будет сохранено в массиве
-                    {
-                        coefLine.Add(Convert.ToDouble(textBox.Text));
-                    }
-                    catch (Exception)//иначе в массив будет записан 0 
-                    {
-                        coefLine.Add(0);
-                    }
+                for (int i = 0; i < varNum; i++)
+                {//сохранение в массиве коэффициентов переменных значений текстбоксов
+                    coefLine.Add(getNumberFromForm(textBoxLine[i]));
                 }
+                resValues.Add(getNumberFromForm(textBoxLine[varNum - 1]));//записать в массив значений ограничений содержимое последнего текстбокса в строке
                 coefficArray.Add(coefLine);
             }
         }
-        //-//-//-//-//-//-//
+
+        private double getNumberFromForm(Control form)//извлечь число из формы
+        {
+            try//если содержимое текстбокса преобразуется в число, то оно будет сохранено в массиве
+            {
+                return Convert.ToDouble(form.Text);
+            }
+            catch (Exception)//иначе в массив будет записан 0 
+            {
+               return 0;
+            }
+        }
+
+
+        //-//-//-//-//-//-//К ИНКАПСУЛЯЦИИ
         private void zeroColumsSlice()//поиск и удаление нулевых переменных из массива чисел
         {
-            for (int i = 0; i < varNum-1; i++)//перебор столбцов (без последнего)
+            for (int i = 0; i < varNum; i++)//перебор столбцов (без последнего)
             {
                 double absSummColum = 0;//сумма коэффициентов в колоне по модулю
                 foreach(List<double> coefLine in coefficArray)//перебор всех строк
@@ -196,9 +206,9 @@ namespace SADantsigMethod
             for (int index = 1; index < coefficArray.Count; index++)//перебор всех строк 
             {
                 double absSummString = 0;//абсолютная сумма коэффициентов
-                for (int i = 0; i < coefficArray[index].Count - 1; i++)//перебор всех колонок, кроме последней
+                foreach(double coeffic in coefficArray[index])//перебор всех колонок, кроме последней
                 {
-                    absSummString += Math.Abs(coefficArray[index][i]);//подсчет абсолютной суммы коэффициентов в строке
+                    absSummString += Math.Abs(coeffic);//подсчет абсолютной суммы коэффициентов в строке
                 }
                 if (absSummString == 0)//если сумма = 0 
                 {
@@ -212,12 +222,43 @@ namespace SADantsigMethod
             zeroColumsSlice();//удаление нулевых столбцов
             zeroStringSlice();//удаление нулевых строк
         }
+
+        private void toCanonForm()
+        {
+            int addIndex = 1;//индекс ограничения, к которому будет добавлен не нулевой коэффициент
+            while (coefficArray.Count >= coefficArray[0].Count)//до тех пор пока ограничений больше переменных вводить новые переменные
+            {
+                for (int i = 0; i < coefficArray.Count; i++)
+                {
+                    if (i == addIndex)
+                    {
+                        coefficArray[i].Add(1);
+                    }
+                    else
+                    {
+                        coefficArray[i].Add(0);
+                    }
+                }
+                addIndex++;
+            }
+        }
+
+        void gaussMethod()
+        {
+            for (int i = 1; i < coefficArray.Count; i++)
+            {
+
+            }
+        }
+
         //-//-//-//-//-//-//-//-//
         private void calcBtn_Click(object sender, EventArgs e)
         {
-            coefficArray.Clear();
-            fillCoefArray();
+            coefficArray.Clear(); 
+            resValues.Clear();
+            fillNumberArrays();
             zeroTest();
+            toCanonForm();
             ;
         }
 
