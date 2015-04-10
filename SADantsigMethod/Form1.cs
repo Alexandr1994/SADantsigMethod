@@ -262,7 +262,7 @@ namespace SADantsigMethod
             }
             for (int i = coefficArray.Count - 1; i > 1; i--)//отчистка верхнего угла матрицы
             {
-                for (int j = coefficArray.Count - i; i > 1; i--)
+                for (int j = i - 1; j > 0; j--)
                 {
                     coefficArray[j] = subStrs(coefficArray[j], multStr(coefficArray[i], coefficArray[j][i - 1]));
                 }
