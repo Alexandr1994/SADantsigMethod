@@ -158,7 +158,10 @@ namespace SADantsigMethod
                 {//сохранение в массиве коэффициентов переменных значений текстбоксов
                     coefLine.Add(getNumberFromForm(textBoxLine[i]));
                 }
-                resValues.Add(getNumberFromForm(textBoxLine[varNum - 1]));//записать в массив значений ограничений содержимое последнего текстбокса в строке
+                if (textBoxLine.Count > varNum)
+                {
+                    resValues.Add(getNumberFromForm(textBoxLine[varNum]));//записать в массив значений ограничений содержимое последнего текстбокса в строке
+                }
                 coefficArray.Add(coefLine);
             }
         }
@@ -179,27 +182,26 @@ namespace SADantsigMethod
 
 
         private List<List<double>> localCoefArray = new List<List<double>>();//массив коэффициентов
-
+        int[] basisVarsIndexes;
 
         /// <summary>
         /// Поиск стартовых индексов базисных переменных(после преобразования гаусса)
         /// </summary>
         /// <returns></returns>
-        private int[] chooseStartBasis()
+        private void chooseStartBasis()
         {
-            int[] indexes = new int[coefficArray.Count - 1];
-            for (int i = 0; i < indexes.Length; i++)
+            basisVarsIndexes = new int[coefficArray.Count - 1];
+            for (int i = 0; i < basisVarsIndexes.Length; i++)
             {
                 for (int j = i; j < coefficArray[i+1].Count; j++)
                 {
                     if (columnTest(j))
                     {
-                        indexes[i] = j;
+                        basisVarsIndexes[i] = j;
                         break;
                     }
                 }
             }
-            return indexes;
         }
 
         
@@ -222,17 +224,107 @@ namespace SADantsigMethod
             return false;//иначе не является
         }
 
+        /// <summary>
+        /// Сформировать локальный массив коэффициентов 
+        /// </summary>
+        private void formLocalCoefArray()
+        {
+            List<double> coefLine;
+            for (int i = 0; i < basisVarsIndexes.Length; i++)
+            {
+                coefLine = new List<double>();
+                foreach(double coef in coefficArray[findRestrictIndex(basisVarsIndexes[i])])
+                {
+                    coefLine.Add(coef);
+                }
+                localCoefArray.Add(coefLine);
+            }
+            localCoefArray.Add(findZ());
+            localCoefArray.Add(findDelta());
+        }
 
+        /// <summary>
+        /// Поиск ограничения, где коэффициент данной базисной переменной равен 1
+        /// </summary>
+        /// <param name="basisIndex"></param>
+        /// <returns></returns>
+        private int findRestrictIndex(int basisIndex)
+        {
+            for (int i = 1; i < coefficArray.Count; i++)//пройтись по строкам ограничений массива
+            {
+                if (coefficArray[i][basisVarsIndexes[basisIndex]] == 1)//и если элемент строки с указанным индексом = 1
+                {
+                    return i;//вернуть индекс данной строки
+                }
+            }
+            return -1;//иначе вернуть -1
+        }
 
+        /// <summary>
+        /// Найти относительные оценки Z
+        /// </summary>
+        /// <returns></returns>
+        private List<double> findZ()
+        {
+            List<double>  ZLine = new List<double>();
+            for (int i = 0; i < coefficArray[0].Count; i++)
+            {
+                double sum = 0;
+                for (int j = 0; j < localCoefArray.Count; j++)
+                {
+                    sum += coefficArray[0][basisVarsIndexes[j]] * localCoefArray[j][i];
+                }
+                ZLine.Add(sum);
+            }
+            return ZLine;
+        }
 
+        /// <summary>
+        /// Найти относительные оценки Дельта
+        /// </summary>
+        /// <returns></returns>
+        private List<double> findDelta()
+        {
+            int indexZ = localCoefArray.Count - 1;
+            List<double> DeltaLine = new List<double>();
+            for (int i = 0; i < coefficArray[0].Count; i++)
+            {
+                DeltaLine.Add(coefficArray[0][i] - localCoefArray[indexZ][i]);    
+            }
+            return DeltaLine;
+        }
 
-
+        /// <summary>
+        /// Проверка на выполнение условия окончания поиска максимума
+        /// </summary>
+        /// <returns></returns>
+        private bool canFinish()
+        {
+            int deltaIndex = localCoefArray.Count - 1;
+            if (localCoefArray[deltaIndex].Min() < 0)//если минимальная из оценок Дельта < 0
+            {//то среди них есть отрицательные значения
+                return true;//необходимо продолжить вычисления
+            }
+            return false;//иначе все оценки больше 0 => процесс вычислений можно завершить
+        }
 
         //КОНЕЦ//
 
         private void calculationProcess()
         {
-            int[] bazisIndexes = chooseStartBasis();
+            int counter = 0;
+            chooseStartBasis();
+            formLocalCoefArray();
+            while(canFinish())
+            {
+                counter ++;
+                if (counter > 1000000)
+                {
+                    MessageBox.Show("Ошибка!\nМаксимум не найден после 1000000 итераций!");
+                    break;
+                }
+            }
+            localCoefArray.Clear();
             ;
         }
 
