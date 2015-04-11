@@ -175,6 +175,67 @@ namespace SADantsigMethod
             }
         }
 
+        //К ИНКАПЦУЛЯЦИИ//
+
+
+        private List<List<double>> localCoefArray = new List<List<double>>();//массив коэффициентов
+
+
+        /// <summary>
+        /// Поиск стартовых индексов базисных переменных(после преобразования гаусса)
+        /// </summary>
+        /// <returns></returns>
+        private int[] chooseStartBasis()
+        {
+            int[] indexes = new int[coefficArray.Count - 1];
+            for (int i = 0; i < indexes.Length; i++)
+            {
+                for (int j = i; j < coefficArray[i+1].Count; j++)
+                {
+                    if (columnTest(j))
+                    {
+                        indexes[i] = j;
+                        break;
+                    }
+                }
+            }
+            return indexes;
+        }
+
+        
+        /// <summary>
+        /// Проверка является ли переменная с индексом varIndex базисной
+        /// </summary>
+        /// <param name="varIndex"></param>
+        /// <returns></returns>
+        private bool columnTest(int varIndex)
+        {
+            double coefSum = 0;//сумма индексов данной переменной
+            for (int i = 1; i < coefficArray.Count; i++)//пробежаться по матрице коэффициентов 
+            {
+                coefSum += Math.Abs(coefficArray[i][varIndex]);//и найти абсолютную сумму коеффициентов переменной
+            }
+            if (coefSum.Equals(1))//Если сумма коеффициенов равна 1
+            {
+                return true;//то данная переменная является базисной
+            }
+            return false;//иначе не является
+        }
+
+
+
+
+
+
+
+        //КОНЕЦ//
+
+        private void calculationProcess()
+        {
+            int[] bazisIndexes = chooseStartBasis();
+            ;
+        }
+
         private void calcBtn_Click(object sender, EventArgs e)
         {
             coefficArray.Clear(); 
@@ -182,6 +243,8 @@ namespace SADantsigMethod
             fillNumberArrays();
             MatrixPreparer preparer = new MatrixPreparer(coefficArray);
             coefficArray = preparer.prepareMatrix();
+
+            calculationProcess();
         }
 
 
