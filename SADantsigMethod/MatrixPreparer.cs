@@ -87,7 +87,7 @@ namespace SADantsigMethod
         private void toCanonForm()
         {
             int addIndex = 1;//индекс ограничения, к которому будет добавлен не нулевой коэффициент
-            while (coefficArray.Count >= coefficArray[0].Count)//до тех пор пока ограничений больше переменных вводить новые переменные
+            while (coefficArray.Count-1 >= coefficArray[0].Count)//до тех пор пока ограничений больше переменных вводить новые переменные
             {
                 for (int i = 0; i < coefficArray.Count; i++)
                 {

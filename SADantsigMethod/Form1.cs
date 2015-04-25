@@ -182,7 +182,9 @@ namespace SADantsigMethod
 
 
         private List<List<double>> localCoefArray = new List<List<double>>();//массив коэффициентов
-        int[] basisVarsIndexes;
+        int[] basisVarsIndexes;//массив индексов базисных переменных
+        int godRowIndex;//индекс "неприкосновенной" строки при смене базиса
+        int allowElIndex;//индкс разрешающего элемента в строке
 
         /// <summary>
         /// Поиск стартовых индексов базисных переменных(после преобразования гаусса)
@@ -301,13 +303,58 @@ namespace SADantsigMethod
         private bool canFinish()
         {
             int deltaIndex = localCoefArray.Count - 1;
-            if (localCoefArray[deltaIndex].Min() < 0)//если минимальная из оценок Дельта < 0
-            {//то среди них есть отрицательные значения
-                return true;//необходимо продолжить вычисления
+            if (localCoefArray[deltaIndex].Min() > 0)//если минимальная из оценок Дельта > 0
+            {//то среди них есть положительные значения
+                return false;//необходимо продолжить вычисления
             }
-            return false;//иначе все оценки больше 0 => процесс вычислений можно завершить
+            return true;//иначе все оценки больше 0 => процесс вычислений можно завершить
         }
 
+        /// <summary>
+        /// Найти новый набор базисных переменных
+        /// </summary>
+        private void findNewBasis()
+        {
+            int newVarIndex = findMaxDeltaIndex();//индекс новой базисной переменной = индексу максимальной "Дельты"
+            godRowIndex = findChangeVarIndex(newVarIndex);//найти и сохранить индекс неизменяющейся строки
+            basisVarsIndexes[godRowIndex] = newVarIndex;//замена базисной переменной в массиве
+        }
+
+        /// <summary>
+        /// Найти столбец с наибольшим приращением Дельта
+        /// </summary>
+        /// <returns></returns>
+        private int findMaxDeltaIndex()
+        {
+            List<double> deltaLine = localCoefArray[localCoefArray.Count - 1];//строка "Дельт" - последняя строка массива
+            return deltaLine.IndexOf(deltaLine.Max());//вернуть индекс максимального значения строки
+        }
+
+        /// <summary>
+        /// Найти индекс заменяемой переменной базиса
+        /// </summary>
+        /// <param name="columnIndex"></param>
+        /// <returns></returns>
+        private int findChangeVarIndex(int columnIndex)
+        {
+            List<double> divArray = findDivs(columnIndex);//найти массив частных
+            return divArray.IndexOf(divArray.Min());//вернуть индекс наименьшего элемента массива, который соответствует индексу заменяемой переменной
+        }
+
+        /// <summary>
+        /// Найти массив частных базисных решений на элементы указанного столбца 
+        /// </summary>
+        /// <param name="columnIndex"></param>
+        /// <returns></returns>
+        private List<double> findDivs(int columnIndex)
+        {
+            List<double> divArray = new List<double>();//инициализация массива
+            for (int i = 0; i < resValues.Count; i++)//
+            {
+                divArray.Add(resValues[i] / localCoefArray[i][columnIndex]);//разделить текущее базисное решение на элемент выбранного столбца массива коеффициентов
+            }
+            return divArray;//вернуть найденный массив
+        }
         //КОНЕЦ//
 
         private void calculationProcess()
@@ -317,6 +364,7 @@ namespace SADantsigMethod
             formLocalCoefArray();
             while(canFinish())
             {
+                findNewBasis();
                 counter ++;
                 if (counter > 1000000)
                 {
