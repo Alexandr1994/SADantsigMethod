@@ -37,10 +37,11 @@
             this.controlBox = new System.Windows.Forms.GroupBox();
             this.removeVarBtn = new System.Windows.Forms.Button();
             this.removeResBtn = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
             this.calcBtn = new System.Windows.Forms.Button();
+            this.statusLabel = new System.Windows.Forms.Label();
+            this.resultLabel = new System.Windows.Forms.Label();
+            this.statusBox.SuspendLayout();
             this.controlBox.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -95,6 +96,8 @@
             // statusBox
             // 
             this.statusBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.statusBox.Controls.Add(this.resultLabel);
+            this.statusBox.Controls.Add(this.statusLabel);
             this.statusBox.Location = new System.Drawing.Point(411, 12);
             this.statusBox.Name = "statusBox";
             this.statusBox.Size = new System.Drawing.Size(211, 106);
@@ -109,15 +112,13 @@
             this.controlBox.Controls.Add(this.removeResBtn);
             this.controlBox.Controls.Add(this.label8);
             this.controlBox.Controls.Add(this.varAddBtn);
-            this.controlBox.Controls.Add(this.label2);
             this.controlBox.Controls.Add(this.label1);
             this.controlBox.Controls.Add(this.label7);
             this.controlBox.Controls.Add(this.resAddBtn);
-            this.controlBox.Controls.Add(this.button2);
             this.controlBox.Controls.Add(this.calcBtn);
             this.controlBox.Location = new System.Drawing.Point(411, 124);
             this.controlBox.Name = "controlBox";
-            this.controlBox.Size = new System.Drawing.Size(211, 187);
+            this.controlBox.Size = new System.Drawing.Size(211, 142);
             this.controlBox.TabIndex = 2;
             this.controlBox.TabStop = false;
             this.controlBox.Text = "Управление";
@@ -140,15 +141,6 @@
             this.removeResBtn.Text = "-";
             this.removeResBtn.UseVisualStyleBackColor = true;
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(101, 146);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(67, 26);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Отобразить\r\n решение\r\n";
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -157,15 +149,6 @@
             this.label1.Size = new System.Drawing.Size(105, 26);
             this.label1.TabIndex = 2;
             this.label1.Text = "Решить задачу \r\nпоиска максимума";
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(6, 146);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(89, 23);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Отобразить";
-            this.button2.UseVisualStyleBackColor = true;
             // 
             // calcBtn
             // 
@@ -176,6 +159,24 @@
             this.calcBtn.Text = "Решить";
             this.calcBtn.UseVisualStyleBackColor = true;
             this.calcBtn.Click += new System.EventHandler(this.calcBtn_Click);
+            // 
+            // statusLabel
+            // 
+            this.statusLabel.AutoSize = true;
+            this.statusLabel.Location = new System.Drawing.Point(7, 16);
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(47, 13);
+            this.statusLabel.TabIndex = 0;
+            this.statusLabel.Text = "Статус: ";
+            // 
+            // resultLabel
+            // 
+            this.resultLabel.AutoSize = true;
+            this.resultLabel.Location = new System.Drawing.Point(6, 61);
+            this.resultLabel.Name = "resultLabel";
+            this.resultLabel.Size = new System.Drawing.Size(62, 13);
+            this.resultLabel.TabIndex = 1;
+            this.resultLabel.Text = "Результат:";
             // 
             // Form1
             // 
@@ -188,6 +189,8 @@
             this.MaximumSize = new System.Drawing.Size(1200, 700);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.statusBox.ResumeLayout(false);
+            this.statusBox.PerformLayout();
             this.controlBox.ResumeLayout(false);
             this.controlBox.PerformLayout();
             this.ResumeLayout(false);
@@ -199,9 +202,7 @@
         private System.Windows.Forms.GroupBox dataBox;
         private System.Windows.Forms.GroupBox statusBox;
         private System.Windows.Forms.GroupBox controlBox;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button calcBtn;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button resAddBtn;
@@ -209,6 +210,8 @@
         private System.Windows.Forms.Button varAddBtn;
         private System.Windows.Forms.Button removeVarBtn;
         private System.Windows.Forms.Button removeResBtn;
+        private System.Windows.Forms.Label statusLabel;
+        private System.Windows.Forms.Label resultLabel;
     }
 }
 

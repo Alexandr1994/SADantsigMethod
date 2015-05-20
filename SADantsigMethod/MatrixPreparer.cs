@@ -89,18 +89,27 @@ namespace SADantsigMethod
             int addIndex = 1;//индекс ограничения, к которому будет добавлен не нулевой коэффициент
             while (coefficArray.Count-1 >= coefficArray[0].Count)//до тех пор пока ограничений больше переменных вводить новые переменные
             {
-                for (int i = 0; i < coefficArray.Count; i++)
-                {
-                    if (i == addIndex)
-                    {
-                        coefficArray[i].Add(1);
-                    }
-                    else
-                    {
-                        coefficArray[i].Add(0);
-                    }
-                }
+                addNewVar(addIndex); ;
                 addIndex++;
+            }
+        }
+
+        /// <summary>
+        /// Добавить новую переменную
+        /// </summary>
+        /// <param name="notZeroIndex"></param>
+        private void addNewVar(int notZeroIndex)
+        {
+            for (int i = 0; i < coefficArray.Count; i++)
+            {
+                if (i == notZeroIndex)
+                {
+                    coefficArray[i].Add(1);
+                }
+                else
+                {
+                    coefficArray[i].Add(0);
+                }
             }
         }
 

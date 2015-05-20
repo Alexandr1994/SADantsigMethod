@@ -23,11 +23,11 @@ namespace SADantsigMethod
         public Form1()
         {
             InitializeComponent();
-            intiDataInterface();
+            initDataInterface();
         }
 
 
-        private void intiDataInterface()//инициализация интерфейса для работы с данными
+        private void initDataInterface()//инициализация интерфейса для работы с данными
         {
             varAddBtn.Click += addNewVar;//кнопки добавления
             resAddBtn.Click += addNewRestricton;
@@ -126,7 +126,7 @@ namespace SADantsigMethod
                     localCoefLine.Add(addTextBox(dataBox, 40, coordX, coordY));
                 }
             }
-            return localCoefLine;//вернуть набор текстбоксов
+            return localCoefLine;//набор текстбоксов
         }
 
         private TextBox addTextBox(Control Controller, int weidth,int CoordX, int CoordY)//добавить поле для ввода коэфициента
@@ -303,11 +303,14 @@ namespace SADantsigMethod
         private bool canFinish()
         {
             int deltaIndex = localCoefArray.Count - 1;
-            if (localCoefArray[deltaIndex].Min() > 0)//если минимальная из оценок Дельта > 0
-            {//то среди них есть положительные значения
-                return false;//необходимо продолжить вычисления
+            foreach (double value in localCoefArray[deltaIndex])//перебрать элементы строки Дельта
+            {
+                if (value > 0)//если в строке Дельта есть положительные числа
+                {
+                    return true;//то необходимо продолжить вычисления
+                }
             }
-            return true;//иначе все оценки больше 0 => процесс вычислений можно завершить
+            return false;//иначе все оценки отрицательны или равны 0 => процесс вычислений можно завершить
         }
 
         /// <summary>
@@ -315,9 +318,9 @@ namespace SADantsigMethod
         /// </summary>
         private void findNewBasis()
         {
-            int newVarIndex = findMaxDeltaIndex();//индекс новой базисной переменной = индексу максимальной "Дельты"
-            godRowIndex = findChangeVarIndex(newVarIndex);//найти и сохранить индекс неизменяющейся строки
-            basisVarsIndexes[godRowIndex] = newVarIndex;//замена базисной переменной в массиве
+            allowElIndex = findMaxDeltaIndex();//индекс новой базисной переменной = индексу максимальной "Дельты"
+            godRowIndex = findChangeVarIndex(allowElIndex);//найти и сохранить индекс неизменяющейся строки
+            basisVarsIndexes[godRowIndex] = allowElIndex;//замена базисной переменной в массиве
         }
 
         /// <summary>
@@ -351,9 +354,41 @@ namespace SADantsigMethod
             List<double> divArray = new List<double>();//инициализация массива
             for (int i = 0; i < resValues.Count; i++)//
             {
-                divArray.Add(resValues[i] / localCoefArray[i][columnIndex]);//разделить текущее базисное решение на элемент выбранного столбца массива коеффициентов
-            }
+                if (Math.Abs(localCoefArray[i][columnIndex]) > 1 * Math.Pow(10, -8))//если элемент выбранного столбца массива коеффициентов больше 0
+                {
+                    divArray.Add(resValues[i] / localCoefArray[i][columnIndex]);//разделить текущее базисное решение на этот элемент
+                }
+                else
+                {
+                    divArray.Add(Double.MaxValue);//иначе исключить данный элемент из рассмотрения
+                }
+               }
             return divArray;//вернуть найденный массив
+        }
+
+        /// <summary>
+        /// Построение новой симплекс таблицы
+        /// </summary>
+        private void constructNewMatrix()
+        {
+            for(int i = localCoefArray.Count - 1; i > resValues.Count-1; i-- )//удалить строки Z и Delta
+            {
+                localCoefArray.RemoveAt(i);//удалить текущую строку
+            }
+            for (int i = 0; i < localCoefArray[0].Count; i++)//вычисление новых коэффициенты переменных
+            {
+                for (int j = 0; j < resValues.Count; j++)
+                {
+                    if (j == godRowIndex)//если индекс текущей строки равен индексу разрешающей строки, то пропустить итерацию
+                    {
+                        continue;
+                    }//иначе вычислить новый коэффициент
+                    localCoefArray[j][i] -= (localCoefArray[j][allowElIndex]*localCoefArray[godRowIndex][i])/localCoefArray[godRowIndex][allowElIndex];
+                    resValues[j] -= (resValues[godRowIndex]*localCoefArray[j][allowElIndex])/localCoefArray[godRowIndex][allowElIndex];
+                }
+            }
+            localCoefArray.Add(findZ());//вычисление новогл массива Z
+            localCoefArray.Add(findDelta());//вычисление нового массива Delta
         }
         //КОНЕЦ//
 
@@ -365,7 +400,8 @@ namespace SADantsigMethod
             while(canFinish())
             {
                 findNewBasis();
-                counter ++;
+                constructNewMatrix();
+               // counter ++;
                 if (counter > 1000000)
                 {
                     MessageBox.Show("Ошибка!\nМаксимум не найден после 1000000 итераций!");
