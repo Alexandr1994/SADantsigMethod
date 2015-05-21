@@ -414,11 +414,49 @@ namespace SADantsigMethod
 
         }
 
+        /// <summary>
+        /// Получить найденный максимум
+        /// </summary>
+        /// <returns></returns>
+        public double getMax()
+        {
+            double sum = 0;//сумма
+            for (int i = 0; i < basisVarsIndexes.Length; i++ )//вычисление максимума
+            {
+                sum = resValues[i] * coefficArray[0][basisVarsIndexes[i]];
+            }
+            return sum;
+        }
+
+        /// <summary>
+        /// Получение вектора значений переменных
+        /// </summary>
+        /// <returns></returns>
+        public double[] getVarsValuesVector()
+        {
+            double[] retVector = new double[coefficArray[0].Count];//инициализация масс
+            for (int i = 0; i < retVector.Length; i++)//заполнение возвращаемого вектора
+            {
+                retVector[i] = 0;//установк очередного элемента вектора в 0
+                for(int j = 0; j < basisVarsIndexes.Length; j++)//проверка переменной на принадлежность к базису
+                {
+
+                    if (i == basisVarsIndexes[j])//если переменная относится к базису
+                    {
+                        retVector[i] = resValues[j];//внести в элемент вектора соответствующее базисное решение
+                        break;
+                    }
+                }
+            }
+            return retVector;//вернуть найденный вектор
+        }
 
 
-        //КОНЕЦ//
-
-        private void calculationProcess()
+        /// <summary>
+        /// Основная вычислительная функция, возвращает true в случае успешного выполнения вычислений
+        /// </summary>
+        /// <returns></returns>
+        public bool calculationProcess()
         {
             int counter = 0;
             chooseStartBasis();
@@ -428,15 +466,15 @@ namespace SADantsigMethod
                 findNewBasis();
                 constructNewMatrix();
                 counter ++;
-                if (counter > 100)
+                if (counter > 10000000)
                 {
-                    MessageBox.Show("Ошибка!\nМаксимум не найден после 1000000 итераций!");
-                    break;
+                    return false;
                 }
             }
-            localCoefArray.Clear();
-            ;
+            return true;
         }
+
+        //КОНЕЦ//
 
         private void calcBtn_Click(object sender, EventArgs e)
         {
@@ -444,12 +482,41 @@ namespace SADantsigMethod
             resValues.Clear();
             fillNumberArrays();
             MatrixPreparer preparer = new MatrixPreparer(coefficArray);
-            coefficArray = preparer.prepareMatrix();
-
-            calculationProcess();
+            try
+            {
+                coefficArray = preparer.prepareMatrix();
+                if (!calculationProcess())
+                {
+                    throw new Exception();
+                }
+            }
+            catch (Exception)
+            {
+                statusLabel.Text = "Статус: \n Ошибка вычисления или подготовки!";
+                resultLabel.Text = "Результат: \nНе может быть найден!";
+                MessageBox.Show("Ошибка!\nМаксимум не может быть найден!");
+                clearAll();
+                return;
+            }
+            statusLabel.Text = "Статус: \n Вычисление выполнено!";
+            resultLabel.Text = "Результат: Max =" + getMax().ToString() + "\nВектор значений {";
+            double[] vector = getVarsValuesVector();
+            foreach (double el in vector)
+            {
+                resultLabel.Text +=" " + el.ToString("G4") + " ";
+            }
+            resultLabel.Text += "}";
+            clearAll();
         }
 
-
+        /// <summary>
+        /// Отчистка переменных
+        /// </summary>
+        private void clearAll()
+        {
+            coefficArray.Clear();
+            resValues.Clear();
+        }
 
     }
 }
