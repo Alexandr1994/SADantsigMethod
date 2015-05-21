@@ -241,8 +241,8 @@ namespace SADantsigMethod
                 }
                 localCoefArray.Add(coefLine);
             }
-            localCoefArray.Add(findZ());
-            localCoefArray.Add(findDelta());
+            localCoefArray.Add(findZ(localCoefArray));
+            localCoefArray.Add(findDelta(localCoefArray));
         }
 
         /// <summary>
@@ -266,15 +266,15 @@ namespace SADantsigMethod
         /// Найти относительные оценки Z
         /// </summary>
         /// <returns></returns>
-        private List<double> findZ()
+        private List<double> findZ(List<List<double>> matrix)
         {
             List<double>  ZLine = new List<double>();
-            for (int i = 0; i < coefficArray[0].Count; i++)
+            for (int i = 0; i < matrix[0].Count; i++)
             {
                 double sum = 0;
-                for (int j = 0; j < localCoefArray.Count; j++)
+                for (int j = 0; j < matrix.Count; j++)
                 {
-                    sum += coefficArray[0][basisVarsIndexes[j]] * localCoefArray[j][i];
+                    sum += coefficArray[0][basisVarsIndexes[j]] * matrix[j][i];
                 }
                 ZLine.Add(sum);
             }
@@ -285,13 +285,13 @@ namespace SADantsigMethod
         /// Найти относительные оценки Дельта
         /// </summary>
         /// <returns></returns>
-        private List<double> findDelta()
+        private List<double> findDelta(List<List<double>> matrix)
         {
-            int indexZ = localCoefArray.Count - 1;
+            int indexZ = matrix.Count - 1;
             List<double> DeltaLine = new List<double>();
-            for (int i = 0; i < coefficArray[0].Count; i++)
+            for (int i = 0; i < matrix[0].Count; i++)
             {
-                DeltaLine.Add(coefficArray[0][i] - localCoefArray[indexZ][i]);    
+                DeltaLine.Add(coefficArray[0][i] - matrix[indexZ][i]);    
             }
             return DeltaLine;
         }
@@ -354,7 +354,7 @@ namespace SADantsigMethod
             List<double> divArray = new List<double>();//инициализация массива
             for (int i = 0; i < resValues.Count; i++)//
             {
-                if (Math.Abs(localCoefArray[i][columnIndex]) > 1 * Math.Pow(10, -8))//если элемент выбранного столбца массива коеффициентов больше 0
+                if (localCoefArray[i][columnIndex] > 0)//если элемент выбранного столбца массива коеффициентов больше 0
                 {
                     divArray.Add(resValues[i] / localCoefArray[i][columnIndex]);//разделить текущее базисное решение на этот элемент
                 }
@@ -367,29 +367,55 @@ namespace SADantsigMethod
         }
 
         /// <summary>
+        /// Копирование значений строки матрицы в новую строку, с возможностью деление каждого элемента данной строки на число
+        /// </summary>
+        /// <param name="targetStr">Целевая строка</param>
+        /// <param name="diver">Делитель</param>
+        /// <returns></returns>
+        private List<double> copyString(List<double> targetStr, double diver)
+        {
+            List<double> retStr = new List<double>();//возвращаемая строка
+            foreach (double value in targetStr)
+            {
+                retStr.Add(value/diver);//поэлементное копирование
+            }
+            return retStr;//вернуть копию строки
+        }
+
+        /// <summary>
         /// Построение новой симплекс таблицы
         /// </summary>
         private void constructNewMatrix()
         {
-            for(int i = localCoefArray.Count - 1; i > resValues.Count-1; i-- )//удалить строки Z и Delta
+            List<List<double>> newCoefMatrix = new List<List<double>>();//создание временной матрицы
+            List<double> newRes = new List<double>();//массив базисных ренений
+            for (int i = 0; i < resValues.Count; i++)
             {
-                localCoefArray.RemoveAt(i);//удалить текущую строку
-            }
-            for (int i = 0; i < localCoefArray[0].Count; i++)//вычисление новых коэффициенты переменных
-            {
-                for (int j = 0; j < resValues.Count; j++)
+                newCoefMatrix.Add(new List<double>());//инициализация строки времменой матрицы
+                if (i == godRowIndex)//если рассматриваемая строка разрешающая, 
                 {
-                    if (j == godRowIndex)//если индекс текущей строки равен индексу разрешающей строки, то пропустить итерацию
-                    {
-                        continue;
-                    }//иначе вычислить новый коэффициент
-                    localCoefArray[j][i] -= (localCoefArray[j][allowElIndex]*localCoefArray[godRowIndex][i])/localCoefArray[godRowIndex][allowElIndex];
-                    resValues[j] -= (resValues[godRowIndex]*localCoefArray[j][allowElIndex])/localCoefArray[godRowIndex][allowElIndex];
+                    newCoefMatrix[i] = copyString(localCoefArray[i], localCoefArray[godRowIndex][allowElIndex]);//то сохранить её в временной матрице, разделенную на разрешающий элемент
+                    newRes.Add(resValues[i]);//сохранить старое базисное решение
+                    continue;
                 }
+                for(int j = 0; j < localCoefArray[i].Count; j++)//иначе пересчитать каждые элемент строки
+                {
+                    newCoefMatrix[i].Add(localCoefArray[i][j] - (localCoefArray[i][allowElIndex] * localCoefArray[godRowIndex][j]) / localCoefArray[godRowIndex][allowElIndex]);
+                }
+                newRes.Add(resValues[i] - (resValues[godRowIndex] * localCoefArray[i][allowElIndex]) / localCoefArray[godRowIndex][allowElIndex]);//вычисление нового базисного решения
             }
-            localCoefArray.Add(findZ());//вычисление новогл массива Z
-            localCoefArray.Add(findDelta());//вычисление нового массива Delta
+            newCoefMatrix.Add(findZ(newCoefMatrix));//вычисление новогл массива Z
+            newCoefMatrix.Add(findDelta(newCoefMatrix));//вычисление нового массива Delta
+            localCoefArray.Clear();//отчистить устаревшую матрицу
+            resValues.Clear();//отчистить устаревшие базисные решения
+            localCoefArray = newCoefMatrix;//сохранение вычисленной матрице в массиве
+            resValues = newRes;//сохранение вычисленных базисных решений
+            
+
         }
+
+
+
         //КОНЕЦ//
 
         private void calculationProcess()
@@ -401,8 +427,8 @@ namespace SADantsigMethod
             {
                 findNewBasis();
                 constructNewMatrix();
-               // counter ++;
-                if (counter > 1000000)
+                counter ++;
+                if (counter > 100)
                 {
                     MessageBox.Show("Ошибка!\nМаксимум не найден после 1000000 итераций!");
                     break;
