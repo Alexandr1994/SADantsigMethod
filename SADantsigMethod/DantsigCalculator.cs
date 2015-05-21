@@ -9,7 +9,7 @@ namespace SADantsigMethod
     class DantsigCalculator
     {
 
-        private List<List<double>> coefficArray = new List<List<double>>();//входной массив коэффициентов ограничений и функции для вычислений
+        private List<double> funcValuesVector = new List<double>();//массив коэффициентов переменных функции
         private List<double> resValues = new List<double>();//массив базисных решений
         private List<List<double>> localCoefArray = new List<List<double>>();//массив коэффициентов
         private int[] basisVarsIndexes;//массив индексов базисных переменных
@@ -23,8 +23,10 @@ namespace SADantsigMethod
         /// <param name="resArray">Массив Базисных Решений</param>
         public DantsigCalculator(List<List<double>> data, List<double> resArray)
         {
-            coefficArray = data;
-            resValues = resArray;
+            funcValuesVector = copyString(data[0], 1);//копирование коэффициентов функции во внутренний массив-вектор
+            chooseStartBasis(data);//выбор стартового набора базисных переменных
+            formLocalCoefArray(data);//формирование локальной матрицы коэффициентов
+            resValues = resArray;//копирование массива базисных решений
         }
 
 
@@ -32,14 +34,14 @@ namespace SADantsigMethod
         /// Поиск стартовых индексов базисных переменных(после преобразования гаусса)
         /// </summary>
         /// <returns></returns>
-        private void chooseStartBasis()
+        private void chooseStartBasis(List<List<double>> coefficArray)
         {
             basisVarsIndexes = new int[coefficArray.Count - 1];
             for (int i = 0; i < basisVarsIndexes.Length; i++)
             {
                 for (int j = i; j < coefficArray[i + 1].Count; j++)
                 {
-                    if (columnTest(j))
+                    if (columnTest(coefficArray, j))
                     {
                         basisVarsIndexes[i] = j;
                         break;
@@ -53,7 +55,7 @@ namespace SADantsigMethod
         /// </summary>
         /// <param name="varIndex"></param>
         /// <returns></returns>
-        private bool columnTest(int varIndex)
+        private bool columnTest(List<List<double>> coefficArray, int varIndex)
         {
             double coefSum = 0;//сумма индексов данной переменной
             for (int i = 1; i < coefficArray.Count; i++)//пробежаться по матрице коэффициентов 
@@ -70,13 +72,13 @@ namespace SADantsigMethod
         /// <summary>
         /// Сформировать локальный массив коэффициентов 
         /// </summary>
-        private void formLocalCoefArray()
+        private void formLocalCoefArray(List<List<double>> coefficArray)
         {
             List<double> coefLine;
             for (int i = 0; i < basisVarsIndexes.Length; i++)
             {
                 coefLine = new List<double>();
-                foreach (double coef in coefficArray[findRestrictIndex(basisVarsIndexes[i])])
+                foreach (double coef in coefficArray[findRestrictIndex(coefficArray, basisVarsIndexes[i])])
                 {
                     coefLine.Add(coef);
                 }
@@ -91,7 +93,7 @@ namespace SADantsigMethod
         /// </summary>
         /// <param name="basisIndex"></param>
         /// <returns></returns>
-        private int findRestrictIndex(int basisIndex)
+        private int findRestrictIndex(List<List<double>> coefficArray, int basisIndex)
         {
             for (int i = 1; i < coefficArray.Count; i++)//пройтись по строкам ограничений массива
             {
@@ -115,7 +117,7 @@ namespace SADantsigMethod
                 double sum = 0;
                 for (int j = 0; j < matrix.Count; j++)
                 {
-                    sum += coefficArray[0][basisVarsIndexes[j]] * matrix[j][i];
+                    sum += funcValuesVector[basisVarsIndexes[j]] * matrix[j][i];
                 }
                 ZLine.Add(sum);
             }
@@ -132,7 +134,7 @@ namespace SADantsigMethod
             List<double> DeltaLine = new List<double>();
             for (int i = 0; i < matrix[0].Count; i++)
             {
-                DeltaLine.Add(coefficArray[0][i] - matrix[indexZ][i]);
+                DeltaLine.Add(funcValuesVector[i] - matrix[indexZ][i]);
             }
             return DeltaLine;
         }
@@ -264,7 +266,7 @@ namespace SADantsigMethod
             double sum = 0;//сумма
             for (int i = 0; i < basisVarsIndexes.Length; i++)//вычисление максимума
             {
-                sum = resValues[i] * coefficArray[0][basisVarsIndexes[i]];
+                sum = resValues[i] * funcValuesVector[basisVarsIndexes[i]];
             }
             return sum;
         }
@@ -275,7 +277,7 @@ namespace SADantsigMethod
         /// <returns></returns>
         public double[] getVarsValuesVector()
         {
-            double[] retVector = new double[coefficArray[0].Count];//инициализация масс
+            double[] retVector = new double[funcValuesVector.Count];//инициализация масс
             for (int i = 0; i < retVector.Length; i++)//заполнение возвращаемого вектора
             {
                 retVector[i] = 0;//установк очередного элемента вектора в 0
@@ -300,8 +302,7 @@ namespace SADantsigMethod
         public bool calculationProcess()
         {
             int counter = 0;
-            chooseStartBasis();
-            formLocalCoefArray();
+            
             while (canFinish())
             {
                 findNewBasis();
@@ -314,14 +315,6 @@ namespace SADantsigMethod
             }
             return true;
         }
-
-
-
-
-
-
-
-
 
     }
 }

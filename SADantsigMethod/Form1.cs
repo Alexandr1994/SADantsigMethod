@@ -178,45 +178,38 @@ namespace SADantsigMethod
             }
         }
 
-        //К ИНКАПЦУЛЯЦИИ//
-
-
-
-
-        //КОНЕЦ//
-
         private void calcBtn_Click(object sender, EventArgs e)
         {
-            coefficArray.Clear(); 
-            resValues.Clear();
-            fillNumberArrays();
-            MatrixPreparer preparer = new MatrixPreparer(coefficArray);
-            DantsigCalculator dantsingCalc = new DantsigCalculator(coefficArray, resValues);
+            clearAll();//отчистка массивов коэффициентов и ограничений от старых значений
+            fillNumberArrays();//заполнение массивов новыми значениями
+            MatrixPreparer preparer = new MatrixPreparer(coefficArray);//инициализация класса подготовки данных к вычислениям
+            DantsigCalculator dantsingCalc;//резервирование класса вычислений
             try
             {
-                coefficArray = preparer.prepareMatrix();
-                if (!dantsingCalc.calculationProcess())
+                coefficArray = preparer.prepareMatrix();//подготовка данных к вычислениям
+                dantsingCalc = new DantsigCalculator(coefficArray, resValues);//инициализация класса вычислений
+                if (!dantsingCalc.calculationProcess())//произведение вычислений
                 {
-                    throw new Exception();
+                    throw new Exception();//в случае невозможности выполнения вычислений выдать исключение
                 }
             }
             catch (Exception)
-            {
+            {//сообщение об ошибке
                 statusLabel.Text = "Статус: \n Ошибка вычисления или подготовки!";
                 resultLabel.Text = "Результат: \nНе может быть найден!";
                 MessageBox.Show("Ошибка!\nМаксимум не может быть найден!");
-                clearAll();
-                return;
+                clearAll();//отчистка массивов данных
+                return;//окончание работы функции
             }
-            statusLabel.Text = "Статус: \n Вычисление выполнено!";
-            resultLabel.Text = "Результат: Max =" + dantsingCalc.getMax().ToString() + "\nВектор значений {";
+            statusLabel.Text = "Статус: \n Вычисление выполнено!";//выдача результатов вычислений
+            resultLabel.Text = "Результат: Max = " + dantsingCalc.getMax().ToString() + "\nВектор значений {";
             double[] vector = dantsingCalc.getVarsValuesVector();
             foreach (double el in vector)
             {
                 resultLabel.Text +=" " + el.ToString("G4") + " ";
             }
             resultLabel.Text += "}";
-            clearAll();
+            clearAll();//отчистка массивов данных
         }
 
         /// <summary>
