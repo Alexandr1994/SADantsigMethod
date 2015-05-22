@@ -28,21 +28,25 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.dataBox = new System.Windows.Forms.GroupBox();
             this.label8 = new System.Windows.Forms.Label();
             this.varAddBtn = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.resAddBtn = new System.Windows.Forms.Button();
             this.statusBox = new System.Windows.Forms.GroupBox();
+            this.resultLabel = new System.Windows.Forms.Label();
+            this.statusLabel = new System.Windows.Forms.Label();
             this.controlBox = new System.Windows.Forms.GroupBox();
             this.removeVarBtn = new System.Windows.Forms.Button();
             this.removeResBtn = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.calcBtn = new System.Windows.Forms.Button();
-            this.statusLabel = new System.Windows.Forms.Label();
-            this.resultLabel = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.statusBox.SuspendLayout();
             this.controlBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // dataBox
@@ -52,7 +56,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataBox.Location = new System.Drawing.Point(12, 12);
             this.dataBox.Name = "dataBox";
-            this.dataBox.Size = new System.Drawing.Size(393, 298);
+            this.dataBox.Size = new System.Drawing.Size(393, 331);
             this.dataBox.TabIndex = 0;
             this.dataBox.TabStop = false;
             this.dataBox.Text = "Функция и ограничения";
@@ -104,6 +108,24 @@
             this.statusBox.TabIndex = 1;
             this.statusBox.TabStop = false;
             this.statusBox.Text = "Статус";
+            // 
+            // resultLabel
+            // 
+            this.resultLabel.AutoSize = true;
+            this.resultLabel.Location = new System.Drawing.Point(6, 61);
+            this.resultLabel.Name = "resultLabel";
+            this.resultLabel.Size = new System.Drawing.Size(62, 13);
+            this.resultLabel.TabIndex = 1;
+            this.resultLabel.Text = "Результат:";
+            // 
+            // statusLabel
+            // 
+            this.statusLabel.AutoSize = true;
+            this.statusLabel.Location = new System.Drawing.Point(7, 16);
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(47, 13);
+            this.statusLabel.TabIndex = 0;
+            this.statusLabel.Text = "Статус: ";
             // 
             // controlBox
             // 
@@ -160,29 +182,32 @@
             this.calcBtn.UseVisualStyleBackColor = true;
             this.calcBtn.Click += new System.EventHandler(this.calcBtn_Click);
             // 
-            // statusLabel
+            // pictureBox1
             // 
-            this.statusLabel.AutoSize = true;
-            this.statusLabel.Location = new System.Drawing.Point(7, 16);
-            this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(47, 13);
-            this.statusLabel.TabIndex = 0;
-            this.statusLabel.Text = "Статус: ";
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(552, 272);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(70, 70);
+            this.pictureBox1.TabIndex = 3;
+            this.pictureBox1.TabStop = false;
             // 
-            // resultLabel
+            // label2
             // 
-            this.resultLabel.AutoSize = true;
-            this.resultLabel.Location = new System.Drawing.Point(6, 61);
-            this.resultLabel.Name = "resultLabel";
-            this.resultLabel.Size = new System.Drawing.Size(62, 13);
-            this.resultLabel.TabIndex = 1;
-            this.resultLabel.Text = "Результат:";
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(418, 272);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(117, 78);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "      ВЫПОЛНИЛ:\r\nСтудент группы В-312\r\n    ФИТиКС ОмГТУ\r\n      Фахрутдинов\r\n     " +
+    "    Александр\r\n         Ренатович";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(634, 322);
+            this.ClientSize = new System.Drawing.Size(634, 355);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.controlBox);
             this.Controls.Add(this.statusBox);
             this.Controls.Add(this.dataBox);
@@ -193,7 +218,9 @@
             this.statusBox.PerformLayout();
             this.controlBox.ResumeLayout(false);
             this.controlBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -212,6 +239,8 @@
         private System.Windows.Forms.Button removeResBtn;
         private System.Windows.Forms.Label statusLabel;
         private System.Windows.Forms.Label resultLabel;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Label label2;
     }
 }
 
