@@ -213,7 +213,7 @@
             this.Controls.Add(this.dataBox);
             this.MaximumSize = new System.Drawing.Size(1200, 700);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Симплекс-метод Данцига";
             this.statusBox.ResumeLayout(false);
             this.statusBox.PerformLayout();
             this.controlBox.ResumeLayout(false);
